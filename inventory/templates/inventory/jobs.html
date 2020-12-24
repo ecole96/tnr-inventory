@@ -1,0 +1,92 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load render_table from django_tables2 %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'inventory/tables.css' %}">
+    <link rel="stylesheet" href="{% static 'inventory/modal.css' %}">
+    <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+{% endblock head %}
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".new").modalForm({
+                formURL: "{% url 'new_job' %}"
+            });
+            $(".delete-job").each(function () {
+                $(this).modalForm({formURL: $(this).data('id')});
+            });
+            $('#id_created_0').datepicker({clearBtn: true });
+            $('#id_created_1').datepicker({clearBtn: true });
+        });
+    </script>
+    <div class="wrapper">
+        {% include "inventory/sidebar.html" %}
+        <div class="container-fluid vh-100">
+            {% include "inventory/navbar.html" %}
+            <div class="container-fluid">
+                <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content text-white"></div>
+                    </div>
+                </div>
+                <div class="card mt-3 bg-dark">
+                    <div class="card-body container">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class='alert alert-{{ message.level_tag }} offset-sm-1 col-sm-10'>
+                                    {% if 'safe' in message.tags %}
+                                        {{ message|safe }}
+                                    {% else %}
+                                        {{ message }}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form class="filters" method="get">
+                            <div class="row">
+                                <div class='col-sm-5'>
+                                    {{ filter.form.customer_name|as_crispy_field }} 
+                                </div>
+                                <div class='col-sm-2'>
+                                    {{ filter.form.id|as_crispy_field }}
+                                </div>
+                                <div class="col-sm-5">
+                                    {{ filter.form.created|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    {{ filter.form.vehicle|as_crispy_field }}
+                                </div>
+                                <div class="col-sm-3">
+                                    {{ filter.form.status|as_crispy_field }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-primary" type="submit">Apply Filters</button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-sm-12">
+                                            <a href="{% url 'jobs' %}" class="btn btn-info">Reset</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mt-2 bg-dark">
+                            <button title="New Part" class="new btn btn-success mb-1" type="button" name="button">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            {% render_table table %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

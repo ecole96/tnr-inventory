@@ -1,0 +1,16 @@
+body {
+    background: linear-gradient(0deg, rgba(245,185,20,1) 0%, rgba(68,62,50,1) 100%);
+    background-repeat: no-repeat; 
+    background-attachment: fixed;
+}
+
+.filters {
+    color:#f5b914;
+    font-weight:bold;
+    font-size:18px
+}
+
+nav h1 {
+    color:#f5b914;
+}
+

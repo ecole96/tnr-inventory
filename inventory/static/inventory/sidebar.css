@@ -1,0 +1,40 @@
+#sidebar {
+    min-width: 100px;
+    max-width: 100px;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar.active {
+    margin-left: -100px;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -100px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+#sidebar i {
+    font-size:3rem;
+}
+
+#sidebar a {
+    color: #f5b914;
+}
+
+#sidebar a:hover {
+    color:#936f0c;
+}
+
+#sidebar li {
+    padding-top:3rem;
+    text-align:center;
+}
