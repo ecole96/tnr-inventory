@@ -45,6 +45,5 @@ a.page-link:hover {
     color:black;
 }
 
-/*table.table thead th.sortable { background: url('../img/sort_both.png') no-repeat center right; }*/
 table.table thead th.asc { background: url('sort.svg') no-repeat center right; background-size:1rem; }
 table.table thead th.desc { background: url('down-arrow.svg') no-repeat center right; background-size:1rem }
