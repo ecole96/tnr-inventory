@@ -46,92 +46,98 @@
                             <h3 class="panel-title"><strong>Job Summary</strong></h3>
                         </div>
                         <div class="panel-body">
-                            <div class="table-responsive">
-                                <table class="table table-condensed labor">
-                                    <thead>
+                            <table class="table table-condensed notes">
+                                <thead>
+                                    <tr>
+                                        <td colspan="4"><strong>Notes</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4">{{ job.notes }}</td>
+                                    </tr>
+                                </tbody>   
+                            </table>
+                            <table class="table table-condensed labor">
+                                <thead>
+                                    <tr>
+                                        <td><strong>Service Performed</strong></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-right"><strong>Price</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for service in prices.labor %}
                                         <tr>
-                                            <td><strong>Service Performed</strong></td>
+                                            <td>{{ service.desc }}</td>
                                             <td></td>
                                             <td></td>
-                                            <td class="text-right"><strong>Price</strong></td>
+                                            <td class="text-right">${{ service.price }}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for service in prices.labor %}
-                                            <tr>
-                                                <td>{{ service.desc }}</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="text-right">${{ service.price }}</td>
-                                            </tr>
-                                        {% endfor %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line text-center"><strong>Labor</strong></td>
+                                        <td class="thick-line text-right">${{ prices.labor_price }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-condensed parts">
+                                <thead>
+                                    <tr>
+                                        <td><strong>Part</strong></td>
+                                        <td class="text-center"><strong>Unit Price</strong></td>
+                                        <td class="text-center"><strong>Quantity</strong></td>
+                                        <td class="text-right"><strong>Totals</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for part in prices.parts %}
                                         <tr>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line text-center"><strong>Labor</strong></td>
-                                            <td class="thick-line text-right">${{ prices.labor_price }}</td>
+                                            <td>{{ part.name }}</td>
+                                            <td class="text-center">${{ part.unit_price }}</td>
+                                            <td class="text-center">{{ part.quantity }}</td>
+                                            <td class="text-right">${{ part.total }}</td>
                                         </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-condensed parts">
-                                    <thead>
-                                        <tr>
-                                            <td><strong>Part</strong></td>
-                                            <td class="text-center"><strong>Unit Price</strong></td>
-                                            <td class="text-center"><strong>Quantity</strong></td>
-                                            <td class="text-right"><strong>Totals</strong></td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for part in prices.parts %}
-                                            <tr>
-                                                <td>{{ part.name }}</td>
-                                                <td class="text-center">${{ part.unit_price }}</td>
-                                                <td class="text-center">{{ part.quantity }}</td>
-                                                <td class="text-right">${{ part.total }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                        <tr>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line text-center"><strong>Parts</strong></td>
-                                            <td class="thick-line text-right">${{ prices.parts_price }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="no-line"></td>
-                                            <td class="no-line"></td>
-                                            <td class="no-line text-center"></td>
-                                            <td class="no-line text-right"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-condensed sum">
-                                    <tbody>
-                                        <tr>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line"></td>
-                                            <td class="thick-line text-center"><strong>Subtotal</strong></td>
-                                            <td class="thick-line text-right">${{ prices.subtotal }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="no-line"></td>
-                                            <td class="no-line"></td>
-                                            <td class="no-line text-center"><strong>Tax</strong></td>
-                                            <td class="no-line text-right">${{ prices.tax }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="no-line"></td>
-                                            <td class="no-line"></td>
-                                            <td class="no-line text-center"><strong>Total</strong></td>
-                                            <td class="no-line text-right">${{ prices.total }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line text-center"><strong>Parts</strong></td>
+                                        <td class="thick-line text-right">${{ prices.parts_price }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="no-line text-center"></td>
+                                        <td class="no-line text-right"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-condensed sum">
+                                <tbody>
+                                    <tr>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line text-center"><strong>Subtotal</strong></td>
+                                        <td class="thick-line text-right">${{ prices.subtotal }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="no-line text-center"><strong>Tax</strong></td>
+                                        <td class="no-line text-right">${{ prices.tax }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="no-line text-center"><strong>Total</strong></td>
+                                        <td class="no-line text-right">${{ prices.total }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
