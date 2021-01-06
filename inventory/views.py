@@ -19,6 +19,7 @@ from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
+# views Jobs with the selected Part attached to them (accessed via Parts page)
 class ViewJobParts(BSModalReadView):
     template_name = 'inventory/view_jobparts.html'
     model = Part
@@ -30,28 +31,29 @@ class ViewJobParts(BSModalReadView):
         context['jobparts'] = JobPart.objects.filter(part=part)
         return context
 
-# Create your views here.
+# email an invoice for a particular Job (accessed via Job Details page)
 @login_required
 def email_invoice(request,job_pk):
     job = Job.objects.filter(pk=job_pk).first()
-    if not job:
+    if not job: # job doesn't exist
         status = 404
     else:
-        if not job.customer_email:
+        if not job.customer_email: # no customer email provided
             status = 400
         else:
             prices = calculate_prices(job,invoice=True)
             context = {'job':job, 'prices':prices, 'now': datetime.datetime.now()}
             subject = "TNR Motorcycle & ATV - Invoice for " + job.customer_name
-            html_message = render_to_string('inventory/email_invoice.html', context)
-            plaintext_message = render_to_string('inventory/invoice_plaintext', context)
+            html_message = render_to_string('inventory/email_invoice.html', context) # primary invoice (HTML formatting) 
+            plaintext_message = render_to_string('inventory/invoice_plaintext', context) # simple invoice (plaintext email)
             try:
                 send_mail(subject,plaintext_message,None,[job.customer_email],html_message=html_message)
-                status = 200
+                status = 200 # success
             except Exception as e:
-                status = 500   
+                status = 500 # failed to send
     return HttpResponse(status=status)
 
+# view invoice for perusing and/or printing
 @login_required
 def view_invoice(request,job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -59,6 +61,7 @@ def view_invoice(request,job_pk):
     context = {'job':job, 'prices':prices, 'now': datetime.datetime.now()}
     return render(request,"inventory/view_invoice.html",context=context)
 
+# essentially an API call - inputs a Job ID and outputs that job's data (used via ajax on new JobPart form)
 @login_required
 def get_part_data(request, pk):
     part_dict = {}
@@ -69,6 +72,7 @@ def get_part_data(request, pk):
         part_dict['unit_price'] = str(part.unit_price)
     return HttpResponse(json.dumps(part_dict))
 
+# Job Details page - manage an individual Job
 class JobDetails(MultiTableMixin,TemplateView):
     template_name = "inventory/job_details.html"
     table_pagination = {
@@ -84,15 +88,16 @@ class JobDetails(MultiTableMixin,TemplateView):
     
     def dispatch(self, request, *args, **kwargs):
         pk = self.kwargs['pk']
-        if not Job.objects.filter(pk=pk).exists():
+        if not Job.objects.filter(pk=pk).exists(): # 404 if Job doesn't exist
             return HttpResponse(status=404)
         else:
             self.tables = [
                 ServiceTable(Service.objects.filter(job=pk)),
                 JobPartTable(JobPart.objects.filter(job=pk))
-            ]
+            ] # initialize Service and JobPart tables
         return super().dispatch(request, *args, **kwargs)
 
+# edit Job details
 class EditJob(BSModalUpdateView):
     model = Job
     template_name = 'inventory/form_modal.html'
@@ -113,6 +118,7 @@ class EditJob(BSModalUpdateView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# delete a Job (either from Jobs or Job Details page)
 class DeleteJob(BSModalDeleteView):
     model = Job
     template_name = 'inventory/modal_delete.html'
@@ -120,7 +126,7 @@ class DeleteJob(BSModalDeleteView):
     success_url = reverse_lazy('jobs')
 
     def post(self, request, *args, **kwargs):
-        if request.POST.get("return_parts") == 'on':
+        if request.POST.get("return_parts") == 'on': # if box ticked, return all of the Job's JobParts to inventory
             job = Job.objects.get(pk=kwargs['pk'])
             jobparts = JobPart.objects.filter(job=job)
             for jp in jobparts:
@@ -141,6 +147,7 @@ class DeleteJob(BSModalDeleteView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# creating a new Service within a Job
 class NewService(BSModalCreateView):
     template_name = 'inventory/form_modal.html'
     form_class = ServiceForm
@@ -158,6 +165,7 @@ class NewService(BSModalCreateView):
         context['modal_title'] = "New Service"
         return context
 
+# edit Service within a Job
 class EditService(BSModalUpdateView):
     model = Service
     template_name = 'inventory/form_modal.html'
@@ -178,6 +186,7 @@ class EditService(BSModalUpdateView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# delete Service from Job
 class DeleteService(BSModalDeleteView):
     model = Service
     template_name = 'inventory/modal_delete.html'
@@ -198,6 +207,7 @@ class DeleteService(BSModalDeleteView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# add Part to Job
 class NewJobPart(BSModalCreateView):
     template_name = 'inventory/form_modal.html'
     form_class = JobPartForm
@@ -208,7 +218,7 @@ class NewJobPart(BSModalCreateView):
 
     def form_valid(self, form):
         form.instance.job = Job.objects.get(pk=self.kwargs['job_pk'])
-        if not self.request.is_ajax():
+        if not self.request.is_ajax(): # modal form library submits forms twice by design - once with ajax; don't save changes during ajax call
             part = form.instance.part
             part.quantity -= form.instance.quantity
             part.save()
@@ -219,6 +229,7 @@ class NewJobPart(BSModalCreateView):
         context['modal_title'] = "Add Part"
         return context
 
+# edit Part data within a Job
 class EditJobPart(BSModalUpdateView):
     model = JobPart
     template_name = 'inventory/form_modal.html'
@@ -226,14 +237,14 @@ class EditJobPart(BSModalUpdateView):
     success_message = 'Part has been updated.'
 
     def form_valid(self, form):
-        if not self.request.is_ajax() and 'quantity' in form.changed_data:
-            old_quantity = JobPart.objects.get(pk=form.instance.pk).quantity
-            new_quantity = form.instance.quantity
+        if not self.request.is_ajax() and 'quantity' in form.changed_data: 
+            old_quantity = JobPart.objects.get(pk=form.instance.pk).quantity # quantity before edit
+            new_quantity = form.instance.quantity # quantity to be updated
             part = form.instance.part
-            if new_quantity < old_quantity:
+            if new_quantity < old_quantity: # quantity decreased - put part(s) back into inventory
                 part.quantity += (old_quantity - new_quantity)
                 part.save()
-            elif old_quantity < new_quantity:
+            elif old_quantity < new_quantity: # quantity increased - take part(s) out of inventory
                 part.quantity -= (new_quantity - old_quantity)
                 part.save()
         return super(EditJobPart,self).form_valid(form)
@@ -252,13 +263,14 @@ class EditJobPart(BSModalUpdateView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# remove Part from a Job
 class DeleteJobPart(BSModalDeleteView):
     model = JobPart
     template_name = 'inventory/modal_delete.html'
     success_message = 'Part was removed from job.'
 
     def post(self, request, *args, **kwargs):
-        if request.POST.get("return_parts") == 'on':
+        if request.POST.get("return_parts") == 'on': # if box ticked, return this JobPart's quantities to the inventory
             jobpart = JobPart.objects.get(pk=kwargs['pk'])
             part = jobpart.part
             part.quantity += jobpart.quantity
@@ -281,6 +293,7 @@ class DeleteJobPart(BSModalDeleteView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# Jobs page - manage repairs
 class JobsView(SingleTableMixin, FilterView):
     table_class = JobTable
     model = Job
@@ -295,6 +308,7 @@ class JobsView(SingleTableMixin, FilterView):
         context['title'] = "Jobs"
         return context
 
+# create new Job
 class NewJob(BSModalCreateView):
     template_name = 'inventory/form_modal.html'
     form_class = JobForm
@@ -306,6 +320,7 @@ class NewJob(BSModalCreateView):
         context['modal_title'] = "New Job"
         return context
 
+# Parts page - manage inventory
 class PartsView(SingleTableMixin, FilterView):
     table_class = PartTable
     model = Part
@@ -321,8 +336,8 @@ class PartsView(SingleTableMixin, FilterView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        zeroes = Part.objects.filter(quantity=0,ignore=False)
-        if zeroes:
+        zeroes = Part.objects.filter(quantity=0,ignore=False) # out of stock parts in inventory (that aren't ignored)
+        if zeroes: # notify user of out of stock parts
             zeroes_msg = "You've run out of the following parts:<ul>"
             for z in zeroes:
                 zeroes_msg += "<li>"+z.name+" (ID: " + str(z.id) + ")</li>"
@@ -330,6 +345,7 @@ class PartsView(SingleTableMixin, FilterView):
             messages.warning(request,zeroes_msg,extra_tags='safe')
         return super().dispatch(request, *args, **kwargs)
 
+# add new Part to inventory
 class NewPart(BSModalCreateView):
     template_name = 'inventory/form_modal.html'
     form_class = PartForm
@@ -341,6 +357,7 @@ class NewPart(BSModalCreateView):
         context['modal_title'] = "New Part"
         return context
 
+# editing Part in inventory
 class EditPart(BSModalUpdateView):
     model = Part
     template_name = 'inventory/form_modal.html'
@@ -358,6 +375,7 @@ class EditPart(BSModalUpdateView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# delete Part from inventory
 class DeletePart(BSModalDeleteView):
     model = Part
     template_name = 'inventory/modal_delete.html'
@@ -368,7 +386,7 @@ class DeletePart(BSModalDeleteView):
         context = super().get_context_data(**kwargs)
         context['modal_title'] = "Delete Part"
         context['descriptor'] = context['part'].name
-        context['msg'] = " Doing so will remove any instances of this part from jobs."
+        context['msg'] = " Doing so will remove any instances of this part from jobs." # Important: deleting a Part from the inventory will delete any instances of the Part from a Job
         return context
 
     def dispatch(self, request, *args, **kwargs):
@@ -376,18 +394,19 @@ class DeletePart(BSModalDeleteView):
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 
+# login page
 def login(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated: # if already logged in and try to access login page, redirect to Parts page
         return redirect('parts')
     elif request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request,username=username,password=password)
-        if user is not None:
+        if user is not None: # login success
             auth_login(request,user)
             nxt = request.POST.get('next')
-            dest = nxt if nxt else "parts"
+            dest = nxt if nxt else "parts" # unless initial destination provided, log into Parts page upon login
             return redirect(dest)
-        else:
+        else: # login failed
             messages.error(request,'Invalid username/password combination.')
     return render(request,"inventory/login.html",{'title':"Login"})

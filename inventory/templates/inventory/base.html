@@ -16,8 +16,8 @@
         <link rel="stylesheet" href="{% static 'inventory/sidebar.css' %}">
         <script>
             $(document).ready(function () {
-                $('#sidebarCollapse').on('click', function () {
-                    $('#sidebar').toggleClass('active');
+                $('#sidebarCollapse').on('click', function () { // sidebar menu toggle button
+                    $('#sidebar').toggleClass('active'); // upon click, hide if shown (or vice versa)
                 });
             });
         </script>

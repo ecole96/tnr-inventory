@@ -2,6 +2,7 @@ import django_filters as filters
 from .models import Part, Job
 from django import forms
 
+# search filters on Parts page
 class PartFilter(filters.FilterSet):
     name = filters.CharFilter(label="Name",lookup_expr='icontains')
     quantity_lte = filters.NumberFilter(field_name='quantity',label="Quantity (Max)",lookup_expr='lte')
@@ -13,6 +14,7 @@ class PartFilter(filters.FilterSet):
         model = Part
         fields = ['name','id','quantity']
 
+# search filters on Jobs page
 class JobFilter(filters.FilterSet):
     STATUS_CHOICES = [
         ("NS","Not Started"),

@@ -18,6 +18,7 @@
             $(".delete-job").each(function () {
                 $(this).modalForm({formURL: $(this).data('id')});
             });
+            // initializing datepickers for daterange filter
             $('#id_created_0').datepicker({clearBtn: true });
             $('#id_created_1').datepicker({clearBtn: true });
         });

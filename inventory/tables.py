@@ -1,6 +1,7 @@
 import django_tables2 as tables
 from .models import Part, Job, JobPart, Service
 
+# for monetary values - prepends $ to column entries
 class MoneyColumn(tables.Column):
     def render(self,value):
         return "$" + str(value)
@@ -15,7 +16,7 @@ class PartTable(tables.Table):
         template_name = "django_tables2/bootstrap4.html"
         order_by = ('-id',)
         exclude = ('ignore',)
-        attrs = {"class": "table table-responsive-sm"}
+        attrs = {"class": "table table-responsive-sm"} # appending responsive class allows horizontal table scrolling on small screens
 
 class JobTable(tables.Table):
     actions = tables.TemplateColumn(
@@ -36,7 +37,7 @@ class JobPartTable(tables.Table):
     class Meta:
         model = JobPart
         template_name = "django_tables2/bootstrap4.html"
-        exclude = ('id','job')
+        exclude = ('id','job','tax')
         order_by = ('-id',)
         attrs = {"class": "table table-responsive-sm"}
 
@@ -48,6 +49,6 @@ class ServiceTable(tables.Table):
     class Meta:
         model = Service
         template_name = "django_tables2/bootstrap4.html"
-        exclude = ('id','job')
+        exclude = ('id','job','tax')
         order_by = ('-id',)
         attrs = {"class": "table table-responsive-sm"}

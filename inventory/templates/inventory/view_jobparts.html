@@ -9,7 +9,7 @@
         {{ jobparts.count }} {% if jobparts.count > 1 %}jobs{% else %}job{% endif %} with <strong>{{ part }}</strong>:
             <ul>
             {% for jp in jobparts %}
-                <li class="mt-2"><a href="{% url 'job_details' jp.job.pk %}" style="color:#f5b914;"><strong>#{{ jp.job.pk }} / {{ jp.job }}</strong></a>
+                <li class="mt-2"><a href="{% url 'job_details' jp.job.pk %}" style="color:#f5b914;"><strong>{{ jp.job }}</strong></a>
                 <br>(Quantity: {{ jp.quantity }}, Unit Price: ${{ jp.unit_price }})</li>
             {% endfor %}
             </ul>

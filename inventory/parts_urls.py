@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth.decorators import login_required
 
+# URL paths for all views relating to Part operations
 urlpatterns = [
     path('',login_required(views.PartsView.as_view()),name='parts'),
     path('new/',login_required(views.NewPart.as_view()),name='new_part'),

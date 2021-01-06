@@ -34,26 +34,26 @@
             $(".delete-jobpart").each(function () {
                 $(this).modalForm({formURL: $(this).data('id')});
             });
-            $("#email_invoice").click(function(){
-                if($("#email_invoice").hasClass("btn-danger")) {
+            $("#email_invoice").click(function(){ // upon emailing an invoice...
+                if($("#email_invoice").hasClass("btn-danger")) { // initially change button color back to normal if retrying after error
                     $("#email_invoice").toggleClass('btn-danger btn-info');
                 }
                 $("#email_invoice").html("Sending...")
                 $.ajax({
                     url: "/jobs/email_invoice/{{ view.kwargs.pk }}",
                     statusCode: {
-                        200: function (response) {
+                        200: function (response) { // success
                             $("#email_invoice").html("Invoice Sent");
                         },
-                        400: function (response) {
+                        400: function (response) { // no customer email provided
                             $("#email_invoice").toggleClass('btn-info btn-danger');
                             $("#email_invoice").html("No Customer Email")
                         },
-                        404: function (response) {
+                        404: function (response) { // job doesn't exist
                             $("#email_invoice").toggleClass('btn-info btn-danger');
                             $("#email_invoice").html("Job Not Found")
                         },
-                        500: function (response) {
+                        500: function (response) { // email failed to send
                             $("#email_invoice").toggleClass('btn-info btn-danger');
                             $("#email_invoice").html("Server Error")
                         },
