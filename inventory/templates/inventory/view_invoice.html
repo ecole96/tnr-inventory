@@ -18,8 +18,8 @@
                             <address>
                                 <strong>Customer:</strong><br>
                                 {{ job.customer_name }}<br>
-                                {{ job.customer_phone }}<br>
-                                {{ job.customer_email }}
+                                {% if job.customer_phone %} {{ job.customer_phone }} {% else %} No Phone {% endif %}<br>
+                                {% if job.customer_email %} {{ job.customer_email }} {% else %} No Email {% endif %}<br>
                             </address>
                             <address>
                                 <strong>Vehicle:</strong><br>
