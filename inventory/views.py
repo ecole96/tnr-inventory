@@ -76,7 +76,7 @@ def get_part_data(request, pk):
 class JobDetails(MultiTableMixin,TemplateView):
     template_name = "inventory/job_details.html"
     table_pagination = {
-        "per_page": 25
+        "per_page": 10
     }
 
     def get_context_data(self, **kwargs):
@@ -300,7 +300,7 @@ class JobsView(SingleTableMixin, FilterView):
     template_name = "inventory/jobs.html"
     filterset_class = JobFilter
     table_pagination = {
-        "per_page": 25
+        "per_page": 10
     }
 
     def get_context_data(self, **kwargs):
@@ -327,7 +327,7 @@ class PartsView(SingleTableMixin, FilterView):
     template_name = "inventory/parts.html"
     filterset_class = PartFilter
     table_pagination = {
-        "per_page": 25
+        "per_page": 10
     }
 
     def get_context_data(self, **kwargs):
