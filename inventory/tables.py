@@ -1,21 +1,28 @@
 import django_tables2 as tables
 from .models import Part, Job, JobPart, Service
+from django.utils.html import format_html
 
 # for monetary values - prepends $ to column entries
 class MoneyColumn(tables.Column):
     def render(self,value):
         return "$" + str(value)
 
+# django_tables2 already has a BooleanColumn but I want to use custom assets
+class CustomBooleanColumn(tables.Column):
+    def render(self,value):
+        html = "<i class=\"fas fa-check\" style=\"color:green;\"></i>" if value else "<i class=\"fas fa-times\" style=\"color:red;\"></i>"
+        return format_html(html)
+
 class PartTable(tables.Table):
     actions = tables.TemplateColumn(
                     "<button type='button' title='Edit Part' class='edit btn btn-sm btn-primary' data-id='{% url 'edit_part' record.id %}'><span class='fa fa-pencil'></button> <button type='button' title='Delete Part' class='delete btn btn-sm btn-danger' data-id='{% url 'delete_part' record.id %}'><span class='fa fa-trash'></button> <button type='button' title='Jobs with Part' class='edit btn btn-sm btn-info' data-id='{% url 'view_jobparts' record.id %}'><span class='fas fa-briefcase'></button>",
                     verbose_name='',orderable=False)
+    archived = CustomBooleanColumn(verbose_name='Archived?')
     unit_price = MoneyColumn()
     class Meta:
         model = Part
         template_name = "django_tables2/bootstrap4.html"
         order_by = ('-id',)
-        exclude = ('ignore',)
         attrs = {"class": "table table-responsive-sm"} # appending responsive class allows horizontal table scrolling on small screens
 
 class JobTable(tables.Table):

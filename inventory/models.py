@@ -7,7 +7,7 @@ class Part(models.Model):
     name = models.CharField(max_length=250,help_text = "250 characters max.")
     quantity = models.PositiveIntegerField(help_text="This is the number of parts currently in stock (but not allocated to any jobs).")
     unit_price = models.DecimalField(max_digits=11,decimal_places=2,verbose_name="Unit Price ($)",help_text="This can be overridden when adding a part to a job.",validators=[MinValueValidator(Decimal('0.00'))])
-    ignore = models.BooleanField(default=False,blank=True,verbose_name="Ignore Empty Stock?",help_text="Check this if you want this part to be exempted from the zero-quantity notification.")
+    archived = models.BooleanField(default=False,blank=True,verbose_name="Archive?",help_text="Check this to ignore any zero-quantities of this part, and to disable any further attachments to jobs (it will not affect jobs with the part already attached).")
 
     def __str__(self):
         return self.name
