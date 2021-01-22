@@ -49,27 +49,30 @@
                         {% endif %}
                         <form class="filters" method="get">
                             <div class="row">
-                                <div class='col-sm-6'>
+                                <div class='col-sm-8'>
                                     {{ filter.form.name|as_crispy_field }} 
                                 </div>
-                                <div class="col-sm-3">
-                                    {{ filter.form.unit_price_gte|as_crispy_field }}
-                                </div>
-                                <div class="col-sm-3">
-                                    {{ filter.form.unit_price_lte|as_crispy_field }}
+                                <div class='col-sm-4'>
+                                    {{ filter.form.id|as_crispy_field }}
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     {{ filter.form.quantity_gte|as_crispy_field }}
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     {{ filter.form.quantity_lte|as_crispy_field }}
                                 </div>
-                                <div class='col-sm-3'>
-                                    {{ filter.form.id|as_crispy_field }}
+                                <div class="col-sm-2">
+                                    {{ filter.form.unit_price_gte|as_crispy_field }}
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
+                                    {{ filter.form.unit_price_lte|as_crispy_field }}
+                                </div>
+                                <div class='col-sm-2'>
+                                    {{ filter.form.archived|as_crispy_field }}
+                                </div>
+                                <div class="col-sm-2">
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <button class="btn btn-primary" type="submit">Apply Filters</button>

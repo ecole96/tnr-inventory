@@ -9,6 +9,11 @@ class PartFilter(filters.FilterSet):
     quantity_gte = filters.NumberFilter(field_name='quantity',label="Quantity (Min)",lookup_expr='gte')
     unit_price_lte = filters.NumberFilter(field_name='unit_price',label="Unit Price (Max)",lookup_expr='lte')
     unit_price_gte = filters.NumberFilter(field_name='unit_price',label="Unit Price (Min)",lookup_expr='gte')
+    ARCHIVED_CHOICES = [
+    (True,"Yes"),
+    (False,"No")
+    ]
+    archived = filters.ChoiceFilter(label="Archived?",choices=ARCHIVED_CHOICES,initial=False)
 
     class Meta:
         model = Part

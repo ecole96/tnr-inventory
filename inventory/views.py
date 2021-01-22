@@ -76,7 +76,7 @@ def get_part_data(request, pk):
 class JobDetails(MultiTableMixin,TemplateView):
     template_name = "inventory/job_details.html"
     table_pagination = {
-        "per_page": 10
+        "per_page": 15
     }
 
     def get_context_data(self, **kwargs):
@@ -300,7 +300,7 @@ class JobsView(SingleTableMixin, FilterView):
     template_name = "inventory/jobs.html"
     filterset_class = JobFilter
     table_pagination = {
-        "per_page": 10
+        "per_page": 15
     }
 
     def get_context_data(self, **kwargs):
@@ -327,7 +327,7 @@ class PartsView(SingleTableMixin, FilterView):
     template_name = "inventory/parts.html"
     filterset_class = PartFilter
     table_pagination = {
-        "per_page": 10
+        "per_page": 15
     }
 
     def get_context_data(self, **kwargs):
@@ -336,7 +336,7 @@ class PartsView(SingleTableMixin, FilterView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        zeroes = Part.objects.filter(quantity=0,ignore=False) # out of stock parts in inventory (that aren't ignored)
+        zeroes = Part.objects.filter(quantity=0,archived=False) # out of stock parts in inventory (that aren't archived)
         if zeroes: # notify user of out of stock parts
             zeroes_msg = "You've run out of the following parts:<ul>"
             for z in zeroes:

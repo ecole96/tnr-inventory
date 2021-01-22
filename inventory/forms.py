@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 class PartForm(BSModalModelForm):
     class Meta:
         model = Part
-        fields = ('name','quantity','unit_price','ignore')
+        fields = ('name','quantity','unit_price','archived')
         widgets = {
             'name': forms.TextInput(attrs={'size':50})
         }
@@ -31,7 +31,7 @@ class ServiceForm(BSModalModelForm):
 class JobPartForm(BSModalModelForm):
     QUANTITY_CHOICES = [(i,i) for i in range(1,1000)] # placeholder initial values for quantity selection (overridden with actual quantities upon part selection via JS)
     quantity = forms.ChoiceField(choices=QUANTITY_CHOICES)
-    part = forms.ModelChoiceField(queryset=Part.objects.filter(quantity__gt=0).order_by('name')) # only selectable parts have stock in inventory
+    part = forms.ModelChoiceField(queryset=Part.objects.filter(quantity__gt=0,archived=False).order_by('name')) # only selectable parts have stock in inventory
 
     class Meta:
         model = JobPart
