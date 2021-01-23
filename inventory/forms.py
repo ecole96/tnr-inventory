@@ -1,5 +1,5 @@
 from django import forms
-from .models import Part, Job, Service, JobPart
+from .models import Part, Job, Service, JobPart, JobPart_SingleUse
 from bootstrap_modal_forms.forms import BSModalModelForm
 from django.core.exceptions import ValidationError
 
@@ -80,3 +80,16 @@ class ReturnPartForm(forms.Form):
             self.fields['return_parts'].initial = True
             self.fields['return_parts'].label = "Return part to inventory?"
             self.fields['return_parts'].help_text = "If checked, all quantities of this part (pertaining to this job) will be returned to the inventory."
+
+# for creating / editing / deleting a single use JobPart
+class JobPart_SingleUseForm(BSModalModelForm):
+    class Meta:
+        model = JobPart_SingleUse
+        fields = ('name','quantity','unit_price','tax')
+
+    def clean_quantity(self):
+        quantity = int(self.cleaned_data.get("quantity"))
+        if quantity <= 0: # check that jobpart quantity doesn't exceed stock
+            error_msg = "Quantity must be greater than 0."
+            raise ValidationError(error_msg)
+        return quantity

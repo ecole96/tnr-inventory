@@ -16,6 +16,9 @@
             $(".new-part").modalForm({
                 formURL: "{% url 'new_jobpart' view.kwargs.pk %}"
             });
+            $(".new-part-singleuse").modalForm({
+                formURL: "{% url 'new_jobpart_singleuse' view.kwargs.pk %}"
+            });
             $(".edit-job").each(function () {
                 $(this).modalForm({formURL: $(this).data('id')});
             });
@@ -32,6 +35,12 @@
                 $(this).modalForm({formURL: $(this).data('id')});
             });
             $(".delete-jobpart").each(function () {
+                $(this).modalForm({formURL: $(this).data('id')});
+            });
+            $(".edit-jobpart-singleuse").each(function () {
+                $(this).modalForm({formURL: $(this).data('id')});
+            });
+            $(".delete-jobpart-singleuse").each(function () {
                 $(this).modalForm({formURL: $(this).data('id')});
             });
             $("#email_invoice").click(function(){ // upon emailing an invoice...
@@ -188,11 +197,20 @@
                             {% render_table tables.0 %}
                         </div>
                         <div class="col-md-6">
-                            <h2 class="border-bottom">Parts</h2>
+                            <h2 class="border-bottom">Parts from Inventory</h2>
                             <button title="New Part" class="new-part btn btn-success mb-1" type="button" name="button">
                                 <i class="fas fa-plus"></i>
                             </button>
                             {% render_table tables.1 %}
+                        </div>
+                    </div>
+                    <div class="row text-white mt-3">
+                        <div class="offset-md-6 col-md-6">
+                            <h2 class="border-bottom">Parts (Single-Use)</h2>
+                            <button title="New Part" class="new-part-singleuse btn btn-success mb-1" type="button" name="button">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            {% render_table tables.2 %}
                         </div>
                     </div>
                 </div>

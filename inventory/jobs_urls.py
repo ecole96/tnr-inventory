@@ -15,6 +15,9 @@ urlpatterns = [
     path('details/new_part/<int:job_pk>',login_required(views.NewJobPart.as_view()),name='new_jobpart'),
     path('details/edit_part/<int:pk>',login_required(views.EditJobPart.as_view()),name='edit_jobpart'),
     path('details/remove_part/<int:pk>',login_required(views.DeleteJobPart.as_view()),name='delete_jobpart'),
+    path('details/new_part_singleuse/<int:job_pk>',login_required(views.NewJobPart_SingleUse.as_view()),name='new_jobpart_singleuse'),
+    path('details/edit_part_singleuse/<int:pk>',login_required(views.EditJobPart_SingleUse.as_view()),name='edit_jobpart_singleuse'),
+    path('details/remove_part_singleuse/<int:pk>',login_required(views.DeleteJobPart_SingleUse.as_view()),name='delete_jobpart_singleuse'),
     path('view_invoice/<int:job_pk>',views.view_invoice,name='view_invoice'),
     path('email_invoice/<int:job_pk>',views.email_invoice,name='email_invoice'),
 ]

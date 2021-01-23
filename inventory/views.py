@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Part, Job, JobPart, Service
-from .forms import PartForm, JobForm, ServiceForm, JobPartForm, JobPartEditForm, ReturnPartForm
-from .tables import PartTable, JobTable, ServiceTable, JobPartTable
+from .models import Part, Job, JobPart, JobPart_SingleUse, Service
+from .forms import PartForm, JobForm, ServiceForm, JobPartForm, JobPartEditForm, JobPart_SingleUseForm, ReturnPartForm
+from .tables import PartTable, JobTable, ServiceTable, JobPartTable, JobPart_SingleUseTable
 from .filters import PartFilter, JobFilter
 from django.urls import reverse_lazy
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, BSModalDeleteView, BSModalReadView
@@ -93,8 +93,9 @@ class JobDetails(MultiTableMixin,TemplateView):
         else:
             self.tables = [
                 ServiceTable(Service.objects.filter(job=pk)),
-                JobPartTable(JobPart.objects.filter(job=pk))
-            ] # initialize Service and JobPart tables
+                JobPartTable(JobPart.objects.filter(job=pk)),
+                JobPart_SingleUseTable(JobPart_SingleUse.objects.filter(job=pk))
+            ] # initialize service and jobpart tables
         return super().dispatch(request, *args, **kwargs)
 
 # edit Job details
@@ -204,6 +205,66 @@ class DeleteService(BSModalDeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         if not Service.objects.filter(pk=kwargs['pk']).exists():
+            return HttpResponse(status=404)
+        return super().dispatch(request, *args, **kwargs)
+
+# creating new single-use JobPart
+class NewJobPart_SingleUse(BSModalCreateView):
+    template_name = 'inventory/form_modal.html'
+    form_class = JobPart_SingleUseForm
+    success_message = 'Part added to job.'
+
+    def get_success_url(self):
+        return reverse_lazy('job_details', kwargs={'pk': self.kwargs['job_pk']})
+
+    def form_valid(self, form):
+        form.instance.job = Job.objects.get(pk=self.kwargs['job_pk'])
+        return super(NewJobPart_SingleUse, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['modal_title'] = "Add Part"
+        return context
+
+# edit single-use JobPart
+class EditJobPart_SingleUse(BSModalUpdateView):
+    model = JobPart_SingleUse
+    template_name = 'inventory/form_modal.html'
+    form_class = JobPart_SingleUseForm
+    success_message = 'Part has been updated.'
+
+    def get_success_url(self):
+        job_pk = JobPart_SingleUse.objects.get(pk=self.kwargs['pk']).job.pk
+        return reverse_lazy('job_details', kwargs={'pk': job_pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['modal_title'] = "Edit Part"
+        return context
+
+    def dispatch(self, request, *args, **kwargs):
+        if not JobPart_SingleUse.objects.filter(pk=kwargs['pk']).exists():
+            return HttpResponse(status=404)
+        return super().dispatch(request, *args, **kwargs)
+
+# delete single-use JobPart
+class DeleteJobPart_SingleUse(BSModalDeleteView):
+    model = JobPart_SingleUse
+    template_name = 'inventory/modal_delete.html'
+    success_message = 'Part was removed from job.'
+
+    def get_success_url(self):
+        job_pk = JobPart_SingleUse.objects.get(pk=self.kwargs['pk']).job.pk
+        return reverse_lazy('job_details', kwargs={'pk': job_pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['modal_title'] = "Remove Part"
+        context['descriptor'] = context['jobpart_singleuse'].name
+        return context
+
+    def dispatch(self, request, *args, **kwargs):
+        if not JobPart_SingleUse.objects.filter(pk=kwargs['pk']).exists():
             return HttpResponse(status=404)
         return super().dispatch(request, *args, **kwargs)
 

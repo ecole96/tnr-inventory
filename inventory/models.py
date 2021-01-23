@@ -40,6 +40,15 @@ class JobPart(models.Model):
     unit_price = models.DecimalField(max_digits=11,decimal_places=2,verbose_name="Unit Price ($)",validators=[MinValueValidator(Decimal('0.00'))]) # default is selected part's unit price, but can be overridden via form
     tax = models.BooleanField(default=True,blank=True,verbose_name="Tax?",help_text="Check this to charge tax for all quantities of this part (for this job).") # can decide whether to charge tax or not
 
+# like JobPart, but doesn't interact with the inventory - for adding parts not regularly kept in stock to a job. 
+# Usually only needed for single jobs - keeps inventory from being filled with unnecessary parts; user can just directly create the part when adding to job
+class JobPart_SingleUse(models.Model):
+    job = models.ForeignKey(Job,on_delete=models.CASCADE)
+    name = models.CharField(max_length=250,help_text = "250 characters max.",verbose_name="Part")
+    quantity = models.PositiveIntegerField(help_text="How many instances of this part do you want to apply to this job?")
+    unit_price = models.DecimalField(max_digits=11,decimal_places=2,verbose_name="Unit Price ($)",validators=[MinValueValidator(Decimal('0.00'))]) # default is selected part's unit price, but can be overridden via form
+    tax = models.BooleanField(default=True,blank=True,verbose_name="Tax?",help_text="Check this to charge tax for all quantities of this part (for this job).") # can decide whether to charge tax or not
+
 # represents services performed for Jobs (description of service and how much to charge for it)
 class Service(models.Model):
     job = models.ForeignKey(Job,on_delete=models.CASCADE)
