@@ -2,6 +2,7 @@ from django import forms
 from .models import Part, Job, Service, JobPart, JobPart_SingleUse
 from bootstrap_modal_forms.forms import BSModalModelForm
 from django.core.exceptions import ValidationError
+from dal import autocomplete
 
 # for creating / managing a Part
 class PartForm(BSModalModelForm):
@@ -31,7 +32,8 @@ class ServiceForm(BSModalModelForm):
 class JobPartForm(BSModalModelForm):
     QUANTITY_CHOICES = [(i,i) for i in range(1,1000)] # placeholder initial values for quantity selection (overridden with actual quantities upon part selection via JS)
     quantity = forms.ChoiceField(choices=QUANTITY_CHOICES)
-    part = forms.ModelChoiceField(queryset=Part.objects.filter(quantity__gt=0,archived=False).order_by('name')) # only selectable parts have stock in inventory
+    part = forms.ModelChoiceField(queryset=Part.objects.filter(quantity__gt=0,archived=False).order_by('name'), 
+                                  widget=autocomplete.ModelSelect2(url='jobpart_autocomplete',attrs={'data-width': '100%'}))
 
     class Meta:
         model = JobPart

@@ -18,6 +18,17 @@ import datetime
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from dal import autocomplete
+
+# autocomplete for attaching a Part from the inventory to a Job
+class JobPartAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Part.objects.none()
+        qs = Part.objects.filter(quantity__gt=0,archived=False).order_by('name')
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
 
 # views Jobs with the selected Part attached to them (accessed via Parts page)
 class ViewJobParts(BSModalReadView):

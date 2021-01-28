@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, re_path
+from django.conf.urls import url
 from . import views
 from django.contrib.auth.decorators import login_required
 
@@ -20,4 +21,5 @@ urlpatterns = [
     path('details/remove_part_singleuse/<int:pk>',login_required(views.DeleteJobPart_SingleUse.as_view()),name='delete_jobpart_singleuse'),
     path('view_invoice/<int:job_pk>',views.view_invoice,name='view_invoice'),
     path('email_invoice/<int:job_pk>',views.email_invoice,name='email_invoice'),
+    url(r'^jobpart_autocomplete/$',views.JobPartAutocomplete.as_view(),name='jobpart_autocomplete')
 ]
