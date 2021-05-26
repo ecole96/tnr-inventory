@@ -25,7 +25,7 @@ class Job(models.Model):
     customer_email = models.EmailField(blank=True,verbose_name="Customer Email")
     vehicle = models.CharField(max_length=250,blank=True,help_text="What's being repaired?")
     status = models.CharField(max_length=2,choices=STATUS_CHOICES,default="NS") # current state of repair progress
-    notes = models.CharField(max_length=1000,blank=True,help_text="Enter any repair notes here.") # these will appear on the invoice
+    notes = models.CharField(max_length=2500,blank=True,help_text="Enter any repair notes here (2500 characters max).") # these will appear on the invoice
     created = models.DateTimeField(auto_now_add=True,verbose_name="Date/Time Created")
 
     def __str__(self): # String representation is in "Customer - Vehicle" format
