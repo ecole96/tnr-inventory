@@ -7,7 +7,6 @@ django-autocomplete-light==3.8.1
 django-bootstrap-modal-forms==2.0.0
 django-crispy-forms==1.9.2
 django-filter==2.3.0
-django-heroku==0.3.1
 django-inlinecss==0.3.0
 django-tables2==2.3.1
 future==0.18.2

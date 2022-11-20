@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
-import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,17 +83,17 @@ WSGI_APPLICATION = 'tnr_inventory.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "tnr_inventory",
-        'USER': "root",
-        'PASSWORD': "",
-        'HOST': "127.0.0.1",
-        'PORT': "3306",
+        'NAME': os.environ['TNR_DB_NAME'],
+        'USER': os.environ['TNR_DB_USER'],
+        'PASSWORD': os.environ['TNR_DB_PASS'],
+        'HOST': os.environ['TNR_DB_HOST'],
+        'PORT': os.environ['TNR_DB_PORT'],
         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"}
     }
-}'''
+}
 
 
 # Password validation
@@ -151,6 +150,3 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ['TNR_EMAIL']
 EMAIL_HOST_PASSWORD = os.environ['TNR_PASS']
-
-# Activate Django-Heroku.
-django_heroku.settings(locals())
