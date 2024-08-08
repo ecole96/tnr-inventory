@@ -14,7 +14,7 @@ services:
       - db:/db
       - /Users/evancole/Desktop/docker/backups:/backups
     environment:
-      DEPLOYMENT_ENV: development
+      DEPLOYMENT_ENV: production
       TNR_DJANGO_SECRET_FILE: /run/secrets/tnr_django_secret
       TZ: America/Kentucky/Louisville
     secrets:
