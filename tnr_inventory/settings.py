@@ -25,10 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['TNR_DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DEPLOYMENT_ENV'] == 'development' 
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -85,13 +84,8 @@ WSGI_APPLICATION = 'tnr_inventory.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['TNR_DB_NAME'],
-        'USER': os.environ['TNR_DB_USER'],
-        'PASSWORD': os.environ['TNR_DB_PASS'],
-        'HOST': os.environ['TNR_DB_HOST'],
-        'PORT': os.environ['TNR_DB_PORT'],
-        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"}
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.environ['DB_PATH'],
     }
 }
 
@@ -120,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Kentucky/Louisville'
+TIME_ZONE = os.environ['TZ']
 
 USE_I18N = True
 
@@ -143,10 +137,3 @@ MESSAGE_TAGS = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ['TNR_EMAIL']
-EMAIL_HOST_PASSWORD = os.environ['TNR_PASS']

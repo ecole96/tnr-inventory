@@ -38,7 +38,7 @@
                     <div class="card-body container">
                         {% if messages %}
                             {% for message in messages %}
-                                <div class='alert alert-{{ message.level_tag }} offset-sm-1 col-sm-10'>
+                                <div class='alert alert-{{ message.level_tag }}'>
                                     {% if 'safe' in message.tags %}
                                         {{ message|safe }}
                                     {% else %}

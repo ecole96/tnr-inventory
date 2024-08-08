@@ -16,8 +16,6 @@ from .utils import calculate_prices
 import json
 import datetime
 from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from dal import autocomplete
 
 # autocomplete for attaching a Part from the inventory to a Job
@@ -41,28 +39,6 @@ class ViewJobParts(BSModalReadView):
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
         context['jobparts'] = JobPart.objects.filter(part=part)
         return context
-
-# email an invoice for a particular Job (accessed via Job Details page)
-@login_required
-def email_invoice(request,job_pk):
-    job = Job.objects.filter(pk=job_pk).first()
-    if not job: # job doesn't exist
-        status = 404
-    else:
-        if not job.customer_email: # no customer email provided
-            status = 400
-        else:
-            prices = calculate_prices(job,invoice=True)
-            context = {'job':job, 'prices':prices, 'now': datetime.datetime.now()}
-            subject = "TNR Motorcycle & ATV - Invoice for " + job.customer_name
-            html_message = render_to_string('inventory/email_invoice.html', context) # primary invoice (HTML formatting) 
-            plaintext_message = render_to_string('inventory/invoice_plaintext', context) # simple invoice (plaintext email)
-            try:
-                send_mail(subject,plaintext_message,None,[job.customer_email],html_message=html_message)
-                status = 200 # success
-            except Exception as e:
-                status = 500 # failed to send
-    return HttpResponse(status=status)
 
 # view invoice for perusing and/or printing
 @login_required
@@ -410,11 +386,8 @@ class PartsView(SingleTableMixin, FilterView):
     def dispatch(self, request, *args, **kwargs):
         zeroes = Part.objects.filter(quantity=0,archived=False) # out of stock parts in inventory (that aren't archived)
         if zeroes: # notify user of out of stock parts
-            zeroes_msg = "You've run out of the following parts:<ul>"
-            for z in zeroes:
-                zeroes_msg += "<li>"+z.name+" (ID: " + str(z.id) + ")</li>"
-            zeroes_msg += "</ul>"
-            messages.warning(request,zeroes_msg,extra_tags='safe')
+            zeroes_msg = "You've run out of %s parts. Set the \"Max Quantity\" filter to 0 and apply for details." % len(zeroes)
+            messages.warning(request,zeroes_msg)
         return super().dispatch(request, *args, **kwargs)
 
 # add new Part to inventory

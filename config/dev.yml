@@ -1,0 +1,20 @@
+version: '3.9'
+
+secrets:
+  tnr_django_secret:
+    external: true
+volumes:
+  db:
+services:
+  webapp:
+    image: tnr-inventory:1.1.0
+    ports:
+      - "8113:5000"
+    volumes:
+      - db:/db
+    environment:
+      DEPLOYMENT_ENV: development
+      TNR_DJANGO_SECRET_FILE: /run/secrets/tnr_django_secret
+      TZ: America/Kentucky/Louisville
+    secrets:
+      - tnr_django_secret
