@@ -13,4 +13,7 @@ else
     echo "Database loaded at: ${DB_PATH}"
 fi
 
+# Collect static files
+RUN python /tnr-inventory/manage.py collectstatic --noinput
+
 exec "$@"
