@@ -3,19 +3,24 @@ version: '3.9'
 secrets:
   tnr_django_secret:
     external: true
+networks:
+  web_network:
+    external: true
 volumes:
   db:
 services:
   webapp:
-    image: tnr-inventory:1.1.0
+    image: ecole96/projects:tnr-inventory-1.1.0
     ports:
       - "8113:5000"
-    volumes:
-      - db:/db
-      - /Users/evancole/Desktop/docker/backups:/backups
     environment:
       DEPLOYMENT_ENV: development
       TNR_DJANGO_SECRET_FILE: /run/secrets/tnr_django_secret
       TZ: America/Kentucky/Louisville
+    networks:
+      - web_network
     secrets:
       - tnr_django_secret
+    volumes:
+      - db:/db
+      - /Users/evancole/Desktop/docker/backups/tnr-inventory:/backups
