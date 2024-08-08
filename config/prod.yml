@@ -23,4 +23,4 @@ services:
       - tnr_django_secret
     volumes:
       - db:/db
-      - /Users/evancole/Desktop/docker/backups/tnr-inventory:/backups
+      - /backups/tnr-inventory:/backups
