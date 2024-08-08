@@ -14,6 +14,6 @@ else
 fi
 
 # Collect static files
-RUN python /tnr-inventory/manage.py collectstatic --noinput
+python /tnr-inventory/manage.py collectstatic --noinput
 
 exec "$@"
